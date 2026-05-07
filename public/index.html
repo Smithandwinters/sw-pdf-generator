@@ -1,2 +1,149 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Smith & Winters – Job Report Generator</title><style>*;{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,sans-serif;background:#1a1a1a;min-height:100vh;display:flex;flex-direction:column;align-items:center}header{width:100%;background:#111;border-bottom:3px solid #F5C200;padding:14px 32px;display:flex;align-items:center;gap:20px}header img{height:44px}h1{color:#fff;font-size:15px;font-weight:600}.sub{color:#F5C200;display:block;font-size:11px}.card{background:#fff;border-radius:10px;width:100%;max-width:600px;margin:40px 16px;padding:36px 36px 28px;box-shadow:0 8px 32px rgba(0,0,0,.4)}.card h2{font-size:18px;color:#1a1a1a;margin-bottom:6px}.card .sub{color:#666;font-size:13px;margin-bottom:28px}.drop-zone{border:2px dashed #ddd;border-radius:8px;padding:28px 20px;text-align:center;cursor:pointer;transition:all 0.2s;margin-bottom:18px;position:relative}.drop-zone:hover,.drop-zone.drag-over{border-color:#F5C200;background:#fffbea}.drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer}.drop-zone .icon{font-size:32px;margin-bottom:8px}.drop-zone .label{font-size:14px;font-weight:600;color:#333}.drop-zone .hint{font-size:12px;color:#888;margin-top:4px}.drop-zone.has-file{border-color:#27AE60;background:#f0faf4}.drop-zone.has-file .label{color:#1a6e38}.req{background:#8B0000;color:#fff;font-size:10px;padding:2px 7px;border-radius:4px;margin-left:8px;font-weight:600;vertical-align:middle}.opt{background:#555;color:#fff;font-size:10px;padding:2px 7px;border-radius:4px;margin-left:8px;font-weight:600;vertical-align:middle}button.gen{width:100%;padding:14px;background:#F5C200;color:#1a1a1a;font-size:15px;font-weight:700;border:none;border-radius:8px;cursor:pointer;margin-top:8px}button.gen:hover{background:#e0b000}button.gen:disabled{background:#ccc}[class="status"]{margin-top:16px;padding:12px 16px;border-radius:8px;font-size:13px;display:none}.loading{background:#fff8e1;border:1px solid #F5C200;color:#7a5c00;display:block}.error{background:#fdecea;border:1px solid #e57373;color:#8B0000;display:block}.success{background:#e8f5e9;border:1px solid #66bb6a;color:#1a6e38;display:block}.spinner{display:inline-block;width:14px;height:14px;border:2px solid #F5C200;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:8px}@keyframes spin{to{transform:rotate(360deg)}}</style></head><body><header><img src="/logo.png" alt="Smith & Winters" onerror="this.style.display='none'"/><div><h1>Job Report Generator</h1><span class="sub">Smith &amp; Winters Electrical</span></div></header><div class="card"><h2>Generate Completion Report</h2><p class="sub">Upload a SimPRO job PDF and any site photos.</p><form id="f"><div style="font-size:13px;font-weight:600;margin-bottom:6px">SimPRO Job PDF <span class="req">REQUIRED </span></div><div class="drop-zone" id="pdfZ"><input type="file" id="jp" accept=".pdf"/><div class="icon">📄</div><div class="label" id="pL">Click or drag SimPRO PDF here</div><div class="hint">Accepts .pdf files</div></div><div style="font-size:13px;font-weight:600;margin-bottom:6px">Site Photos <span class="opt">OPTIONAL</span></div><div class="drop-zone" id="phZ"><input type="file" id="phs" accept=".jpg,.jpeg,.png,.webp" multiple/><div class="icon">📷</div><div class="label" id="phL">Click or drag photos here</div><div class="hint">.jpg .png .webp - multiple OK</div></div><button type="submit" class="gen" id="gb">Generate Report</button></form><div class="status" id="st"></div></div><script>const jp=document.getElementById("jp"),phs=document.getElementById("phs"),pZ=document.getElementById("pdfZ"),phZ=document.getElementById("phZ");jp.addEventListener("change",()=>{const f=jp.files[0];if(f){document.getElementById("pL").textContent="✔ "+f.name;pZ.classList.add("has-file")}});phs.addEventListener("change",()=>{const n=phs.files.length;if(n>0){document.getElementById("phL").textContent=`✔ ${n} photo${n>1?"s":""} selected`;phZ.classList.add("has-file")}});[pZ,phZ].forEach(z=>{z.addEventListener("dragover",e=>{e.preventDefault();z.classList.add("drag-over")});z.addEventListener("dragleave",()=>z.�lassList.remove("drag-over"));z.addEventListener("drop",()=>z.�lassList.remove("drag-over"))});document.getElementById("f").addEventListener("submit",async e=>{eopreventDefault();const pdf=jp.files[0];if(!pdf){show("error","Please select a SimPRO job PDF");return}const gb=document.getElementById("gb");gb.disabled=true;show("loading",'<span class="spinner"></span> Extracting and building report — 15–30s...');const fd=new FormData();fd.append("jobPdf",pdf);for(const p of phs.files)fd.append("photos",p);try{const r=await fetch("/generate-pdf",{method:"POST",body:fd});if(!r.ok){const err=await r.json().catch(()=>({error:"Unknown error"}));throw new Error(err.error)}const blob=await r.blob();const url=URL/createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=aSW_Completion_${Date.now()}.pdf`;document.body.appendChild(a);a.click();document.body.removeChild(a);URL/revokeObjectURL(url);show("success","✔ Report generated and downloaded")}catch(err){show("error","Error: "+err.message)}finally{gb.disabled=false}});function show(t,m){const el=document.getElementById("st");el.className=t;el.innerHTML=m}</script></body></html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Smith &amp; Winters — Job Report Generator</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a1a; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+header { width: 100%; background: #111; border-bottom: 3px solid #F5C200; padding: 14px 32px; display: flex; align-items: center; gap: 20px; }
+header img { height: 44px; }
+header h1 { color: #fff; font-size: 15px; font-weight: 600; }
+header .sub { color: #F5C200; display: block; font-size: 11px; }
+.card { background: #fff; border-radius: 10px; width: 100%; max-width: 600px; margin: 40px 16px; padding: 36px 36px 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+.card h2 { font-size: 18px; color: #1a1a1a; margin-bottom: 6px; }
+.card .sub { color: #666; font-size: 13px; margin-bottom: 28px; }
+.field-label { font-size: 13px; font-weight: 600; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+.badge-req { background: #8B0000; color: #fff; font-size: 10px; padding: 2px 7px; border-radius: 4px; font-weight: 600; }
+.badge-opt { background: #555; color: #fff; font-size: 10px; padding: 2px 7px; border-radius: 4px; font-weight: 600; }
+.drop-zone { border: 2px dashed #ddd; border-radius: 8px; padding: 28px 20px; text-align: center; cursor: pointer; transition: all 0.2s; margin-bottom: 18px; position: relative; }
+.drop-zone:hover, .drop-zone.drag-over { border-color: #F5C200; background: #fffbea; }
+.drop-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+.drop-zone .icon { font-size: 32px; margin-bottom: 8px; }
+.drop-zone .label { font-size: 14px; font-weight: 600; color: #333; }
+.drop-zone .hint { font-size: 12px; color: #888; margin-top: 4px; }
+.drop-zone.has-file { border-color: #27AE60; background: #f0faf4; }
+.drop-zone.has-file .label { color: #1a6e38; }
+button.gen { width: 100%; padding: 14px; background: #F5C200; color: #1a1a1a; font-size: 15px; font-weight: 700; border: none; border-radius: 8px; cursor: pointer; margin-top: 8px; }
+button.gen:hover { background: #e0b000; }
+button.gen:disabled { background: #ccc; cursor: not-allowed; }
+.status { margin-top: 16px; padding: 12px 16px; border-radius: 8px; font-size: 13px; display: none; }
+.status.loading { background: #fff8e1; border: 1px solid #F5C200; color: #7a5c00; display: block; }
+.status.error { background: #fdecee; border: 1px solid #e57373; color: #8B0000; display: block; }
+.status.success { background: #e8f5e9; border: 1px solid #66bb6a; color: #1a6e38; display: block; }
+.spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid #F5C200; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 8px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<header>
+  <img src="/logo.png" alt="Smith &amp; Winters" onerror="this.style.display='none'"/>
+  <div>
+    <h1>Job Report Generator</h1>
+    <span class="sub">Smith &amp; Winters Electrical</span>
+  </div>
+</header>
+<div class="card">
+  <h2>Generate Completion Report</h2>
+  <p class="sub">Upload a SimPRO job PDF and any site photos to generate a branded PDF report.</p>
+
+  <div class="field-label">SimPRO Job PDF <span class="badge-req">REQUIRED</span></div>
+  <div class="drop-zone" id="pdfZone">
+    <input type="file" id="jobPdfInput" accept=".pdf"/>
+    <div class="icon">📄</div>
+    <div class="label" id="pdfLabel">Click or drag SimPRO PDF here</div>
+    <div class="hint">Accepts .pdf files</div>
+  </div>
+
+  <div class="field-label">Site Photos <span class="badge-opt">OPTIONAL</span></div>
+  <div class="drop-zone" id="photosZone">
+    <input type="file" id="photosInput" accept=".jpg,.jpeg,.png,.webp" multiple/>
+    <div class="icon">📷</div>
+    <div class="label" id="photosLabel">Click or drag photos here</div>
+    <div class="hint">.jpg .png .webp — multiple OK</div>
+  </div>
+
+  <button class="gen" id="generateBtn" type="button">Generate Report</button>
+  <div class="status" id="statusDiv"></div>
+</div>
+
+<script>
+  var jobPdfInput = document.getElementById('jobPdfInput');
+  var photosInput = document.getElementById('photosInput');
+  var pdfZone = document.getElementById('pdfZone');
+  var photosZone = document.getElementById('photosZone');
+  var pdfLabel = document.getElementById('pdfLabel');
+  var photosLabel = document.getElementById('photosLabel');
+  var generateBtn = document.getElementById('generateBtn');
+  var statusDiv = document.getElementById('statusDiv');
+
+  jobPdfInput.addEventListener('change', function() {
+    if (jobPdfInput.files[0]) {
+      pdfLabel.textContent = '✔ ' + jobPdfInput.files[0].name;
+      pdfZone.classList.add('has-file');
+    }
+  });
+
+  photosInput.addEventListener('change', function() {
+    var n = photosInput.files.length;
+    if (n > 0) {
+      photosLabel.textContent = '✔ ' + n + ' photo' + (n > 1 ? 's' : '') + ' selected';
+      photosZone.classList.add('has-file');
+    }
+  });
+
+  [pdfZone, photosZone].forEach(function(z) {
+    z.addEventListener('dragover', function(e) { e.preventDefault(); z.classList.add('drag-over'); });
+    z.addEventListener('dragleave', function() { z.classList.remove('drag-over'); });
+    z.addEventListener('drop', function() { z.classList.remove('drag-over'); });
+  });
+
+  function showStatus(type, msg) {
+    statusDiv.className = 'status ' + type;
+    statusDiv.innerHTML = msg;
+  }
+
+  generateBtn.addEventListener('click', function() {
+    var pdf = jobPdfInput.files[0];
+    if (!pdf) {
+      showStatus('error', 'Please select a SimPRO job PDF first.');
+      return;
+    }
+    generateBtn.disabled = true;
+    showStatus('loading', '<span class="spinner"></span> Extracting job data and building report — this takes 15–30 seconds...');
+
+    var fd = new FormData();
+    fd.append('jobPdf', pdf);
+    for (var i = 0; i < photosInput.files.length; i++) {
+      fd.append('photos', photosInput.files[i]);
+    }
+
+    fetch('/generate-pdf', { method: 'POST', body: fd })
+      .then(function(r) {
+        if (!r.ok) {
+          return r.json().then(function(e) { throw new Error(e.error || 'Server error'); });
+        }
+        return r.blob();
+      })
+      .then(function(blob) {
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'SW_CompletionReport_' + Date.now() + '.pdf';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showStatus('success', '✔ Report generated and downloaded!');
+      })
+      .catch(function(err) {
+        showStatus('error', 'Error: ' + err.message);
+      })
+      .finally(function() {
+        generateBtn.disabled = false;
+      });
+  });
+</script>
+</body>
+</html>
