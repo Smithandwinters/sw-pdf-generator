@@ -269,7 +269,8 @@ def build(json_path, out_path, logo_path):
         for i, pp in enumerate(photos):
             if i > 0:
                 story.append(PageBreak())
-            story += photo_page(pp, "Site Photo %d" % (i+1),
+            photo_title = os.path.splitext(os.path.basename(pp))[0].replace("_", " ").replace("-", " ")
+            story += photo_page(pp, photo_title,
                                 "Works completed at %s, %s." % (site_name, site_addr))
 
     # SIGN-OFF
