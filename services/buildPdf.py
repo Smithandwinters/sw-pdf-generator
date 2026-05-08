@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
-buildPdf.py ÃÂ¢Ãâ¬Ãâ Smith & Winters Electrical Branded Report Generator
+buildPdf.py  Smith & Winters Electrical Branded Report Generator
 Usage: python3 buildPdf.py <job_data.json> <output.pdf> <logo.png>
 
 Matches the Job 4170 completion report style exactly:
@@ -121,7 +122,7 @@ def detail_grid(rows):
                              textColor=DARK_GREY)
     data = []
     for k, v in rows:
-        data.append([Paragraph(k, bold), Paragraph(str(v) if v else "ÃÂ¢Ãâ¬Ãâ", normal)])
+        data.append([Paragraph(k, bold), Paragraph(str(v) if v else "", normal)])
     ts = TableStyle([
         ("ROWBACKGROUNDS", (0, 0), (-1, -1), [WHITE, LIGHT_BG]),
         ("GRID",           (0, 0), (-1, -1), 0.3, MID_GREY),
@@ -245,17 +246,17 @@ def build(json_path, out_path, logo_path):
     story += section_header("CLIENT & JOB DETAILS")
 
     customer = data.get("customer", {})
-    quote_refs = ", ".join(data.get("quoteRefs", [])) or "Ã¢â¬â"
+    quote_refs = ", ".join(data.get("quoteRefs", [])) or ""
     rows = [
-        ("CLIENT",       customer.get("name") or "Ã¢â¬â"),
-        ("BUSINESS",     customer.get("business") or "Ã¢â¬â"),
-        ("CONTACT",      customer.get("phone") or customer.get("contact") or "Ã¢â¬â"),
+        ("CLIENT",       customer.get("name") or ""),
+        ("BUSINESS",     customer.get("business") or ""),
+        ("CONTACT",      customer.get("phone") or customer.get("contact") or ""),
         ("JOB NO.",      job_no),
-        ("SITE ADDRESS", data.get("siteAddress") or "Ã¢â¬â"),
+        ("SITE ADDRESS", data.get("siteAddress") or ""),
         ("LICENCE",      data.get("licence") or "VIC: 26114  QLA: 91858"),
         ("ABN",          data.get("abn") or "70 626 942 596"),
         ("STATUS",       data.get("status") or "COMPLETED"),
-        ("TECHNICIAN",   data.get("technician") or "Ã¢â¬â"),
+        ("TECHNICIAN",   data.get("technician") or ""),
         ("WORKS DATE",   data.get("worksDate") or date.today().strftime("%B %Y")),
         ("QUOTE REF.",   quote_refs),
         ("CERT. SAFETY", data.get("certSafety") or "To be issued on finalisation"),
@@ -263,7 +264,7 @@ def build(json_path, out_path, logo_path):
 
     # Single full-width grid (no truncation)
     story.append(detail_grid(rows))
-    story.append(Spacer(1, 4Ãªmm))
+    story.append(Spacer(1, 4mm))
 
     # SCOPE OF WORKS
     story += section_header("SCOPE OF WORKS COMPLETED")
@@ -317,7 +318,7 @@ def build(json_path, out_path, logo_path):
                                  ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
                                  ("LEFTPADDING", (0, 0), (-1, -1), 6),
                              ])))
-    story.append(Spacer(1, 4Ãªmm))
+    story.append(Spacer(1, 4mm))
 
     # PHOTOS
     photos = [
@@ -325,7 +326,7 @@ def build(json_path, out_path, logo_path):
         if os.path.exists(p) and os.path.splitext(p)[1].lower() in {".jpg", ".jpeg", ".png", ".webp"}
     ]
     if photos:
-        story += section_header("PHOTO DOCUMENTATION Ã¢â¬â WORKS COMPLETED")
+        story += section_header("PHOTO DOCUMENTATION  WORKS COMPLETED")
         story.append(Paragraph(
             f"The following photographs document the completed works on-site at {site_name}, {site_addr}.",
             intro))
@@ -369,7 +370,7 @@ def build(json_path, out_path, logo_path):
 
     client_name = customer.get("name", "")
     sd = [
-        [Paragraph("CLIENT SIGN-OFF", hs), Paragraph("SMITH &amp; WINTERS ELECTPÃICAL", hs)],
+        [Paragraph("CLIENT SIGN-OFF", hs), Paragraph("SMITH &amp; WINTERS ELECTPICAL", hs)],
         [sig_col(client_name), sig_col("_________________________")]
     ]
     story.append(Table(sd, colWidths=[cw, cw],
