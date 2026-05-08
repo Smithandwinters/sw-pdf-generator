@@ -62,7 +62,7 @@ async function buildPdf(jobData, photoFiles) {
 
   const dataWithPhotos = {
     ...jobData,
-    photoPaths: photoFiles.map(f => f.path)
+    photoPaths: photoFiles.map(f => ({ path: f.path, originalname: f.originalname }))
   };
   fs.writeFileSync(jsonPath, JSON.stringify(dataWithPhotos, null, 2));
 
