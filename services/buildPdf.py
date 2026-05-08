@@ -267,6 +267,7 @@ def build(json_path, out_path, logo_path):
         if os.path.exists(fpath) and os.path.splitext(fpath)[1].lower() in {".jpg", ".jpeg", ".png", ".webp"}:
             photos.append({"path": fpath, "name": fname or os.path.basename(fpath)})
     if photos:
+        story.append(PageBreak())
         story += section_header("PHOTO DOCUMENTATION - WORKS COMPLETED")
         story.append(Paragraph(
             "The following photographs document the completed works on-site at %s, %s." % (site_name, site_addr),
