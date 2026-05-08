@@ -96,9 +96,9 @@ def scope_card(quote_ref, title, description):
     content_col = [
         Paragraph("Quote Ref. %s" % quote_ref if quote_ref else "", ref_style),
         Spacer(1, 1*mm),
-        Paragraph(title, title_style),
+        Paragraph(title or "", title_style),
         Spacer(1, 1*mm),
-        Paragraph(description, body_style),
+        Paragraph(description or "", body_style),
     ]
     marker = Table([[""]],  colWidths=[3*mm],
                    style=TableStyle([
@@ -214,8 +214,8 @@ def build(json_path, out_path, logo_path):
         intro))
     story.append(Spacer(1, 3*mm))
     for item in data.get("scopeItems", []):
-        story += scope_card(item.get("quoteRef"), item.get("title", "Works Completed"),
-                            item.get("description", ""))
+        story += scope_card(item.get("quoteRef"), item.get("title") or "Works Completed",
+                            item.get("description") or "")
     story.append(Spacer(1, 4*mm))
 
     # WHAT'S INCLUDED
