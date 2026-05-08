@@ -185,7 +185,8 @@ def build(json_path, out_path, logo_path):
     # CLIENT & JOB DETAILS
     story += section_header("CLIENT & JOB DETAILS")
     customer   = data.get("customer", {})
-    quote_refs = ", ".join(data.get("quoteRefs", [])) or "--"
+    qr_raw = data.get("quoteRefs") or []
+quote_refs = ", ".join(qr_raw) if isinstance(qr_raw, list) else str(qr_raw) if qr_raw else "--"
     rows = [
         ("CLIENT",       customer.get("name") or "--"),
         ("BUSINESS",     customer.get("business") or "--"),
