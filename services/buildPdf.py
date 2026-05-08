@@ -258,18 +258,24 @@ def build(json_path, out_path, logo_path):
     story.append(Spacer(1, 4*mm))
 
     # PHOTOS
-    photos = [p for p in data.get("photoPaths", [])
-              if os.path.exists(p) and os.path.splitext(p)[1].lower() in {".jpg", ".jpeg", ".png", ".webp"}]
+    raw_photos = data.get("photoPaths", [])
+    photos = []
+    for p in raw_photos:
+        fpath = p.get("path", p) if isinstance(p, dict) else p
+        fname = p.get("originalname", "") if isinstance(p, dict) else ""
+        if os.path.exists(fpath) and os.path.splitext(fpath)[1].lower() in {".jpg", ".jpeg", ".png", ".webp"}:
+            photos.append({"path": fpath, "name": fname or os.path.basename(fpath)})
     if photos:
         story += section_header("PHOTO DOCUMENTATION - WORKS COMPLETED")
         story.append(Paragraph(
             "The following photographs document the completed works on-site at %s, %s." % (site_name, site_addr),
             intro))
         story.append(Spacer(1, 3*mm))
-        for i, pp in enumerate(photos):
+        for i, photo in enumerate(photos):
             if i > 0:
                 story.append(PageBreak())
-            photo_title = os.path.splitext(os.path.basename(pp))[0].replace("_", " ").replace("-", " ")
+            pp = photo["path"]
+            photo_title = os.path.splitext(photo["name"])[0].replace("_", " ").replace("-", " ")
             story += photo_page(pp, photo_title,
                                 "Works completed at %s, %s." % (site_name, site_addr))
 
