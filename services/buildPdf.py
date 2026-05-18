@@ -187,6 +187,15 @@ def build(json_path, out_path, logo_path):
     customer   = data.get("customer", {})
     qr_raw = data.get("quoteRefs") or []
     quote_refs = ", ".join(qr_raw) if isinstance(qr_raw, list) else str(qr_raw) if qr_raw else "--"
+
+    # Build photos list early so it's available throughout
+    raw_photos = data.get("photoPaths", [])
+    photos = []
+    for p in raw_photos:
+        fpath = p.get("path", p) if isinstance(p, dict) else p
+        fname = p.get("originalname", "") if isinstance(p, dict) else ""
+        if os.path.exists(fpath) and os.path.splitext(fpath)[1].lower() in {".jpg", ".jpeg", ".png", ".webp"}:
+            photos.append({"path": fpath, "name": fname or os.path.basename(fpath)})
     rows = [
         ("CLIENT",       customer.get("name") or "--"),
         ("BUSINESS",     customer.get("business") or "--"),
@@ -263,14 +272,6 @@ def build(json_path, out_path, logo_path):
                            ])))
     story.append(Spacer(1, 4*mm))
 
-    # PHOTOS
-    raw_photos = data.get("photoPaths", [])
-    photos = []
-    for p in raw_photos:
-        fpath = p.get("path", p) if isinstance(p, dict) else p
-        fname = p.get("originalname", "") if isinstance(p, dict) else ""
-        if os.path.exists(fpath) and os.path.splitext(fpath)[1].lower() in {".jpg", ".jpeg", ".png", ".webp"}:
-            photos.append({"path": fpath, "name": fname or os.path.basename(fpath)})
     if photos:
         story.append(PageBreak())
         story += section_header("PHOTO DOCUMENTATION - WORKS COMPLETED")
