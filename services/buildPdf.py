@@ -227,6 +227,13 @@ def build(json_path, out_path, logo_path):
     for di in default_items:
         story.append(Paragraph("&#8226;  " + di, ds))
     story.append(Spacer(1, 3*mm))
+    # Add photo filenames as dot points under scope
+    if photos:
+        pns = ParagraphStyle("pns", fontName="Helvetica", fontSize=8.5, leading=14)
+        for photo in photos:
+            cap = os.path.splitext(photo["name"])[0].replace("_", " ").replace("-", " ")
+            story.append(Paragraph("&#8226;  " + cap, pns))
+        story.append(Spacer(1, 3*mm))
     for item in data.get("scopeItems", []):
         story += scope_card(item.get("quoteRef"), item.get("title") or "Works Completed",
                             item.get("description") or "")
