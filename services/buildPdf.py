@@ -218,6 +218,12 @@ def build(json_path, out_path, logo_path):
     for di in default_items:
         story.append(Paragraph("&#8226;  " + di, ds))
     story.append(Spacer(1, 3*mm))
+    if photos:
+        ps2 = ParagraphStyle("ps2", fontName="Helvetica", fontSize=8.5, leading=14)
+        for photo in photos:
+            caption = os.path.splitext(photo["name"])[0].replace("_", " ").replace("-", " ")
+            story.append(Paragraph("&#8226;  " + caption, ps2))
+        story.append(Spacer(1, 3*mm))
     for item in data.get("scopeItems", []):
         story += scope_card(item.get("quoteRef"), item.get("title") or "Works Completed",
                             item.get("description") or "")
@@ -285,14 +291,6 @@ def build(json_path, out_path, logo_path):
             photo_title = os.path.splitext(photo["name"])[0].replace("_", " ").replace("-", " ")
             story += photo_page(pp, photo_title,
                                 "Works completed at %s, %s." % (site_name, site_addr))
-
-    if photos:
-        story += section_header("PHOTO NOTES SUMMARY")
-        ps = ParagraphStyle("ps", fontName="Helvetica", fontSize=9, leading=16, leftIndent=10)
-        for photo in photos:
-            caption = os.path.splitext(photo["name"])[0].replace("_", " ").replace("-", " ")
-            story.append(Paragraph("&#8226;  " + caption, ps))
-        story.append(Spacer(1, 4*mm))
 
     # SIGN-OFF
     story.append(PageBreak())
