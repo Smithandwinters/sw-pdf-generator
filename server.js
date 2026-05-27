@@ -1,4 +1,4 @@
-const express = require("express");
+hconst express = require("express");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
@@ -38,7 +38,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/logo.png", express.static(path.join(__dirname, "assets", "logo.png")));
 
 app.post("/generate-pdf",
-  upload.fields([{ name: "jobPdf", maxCount: 1 }, { name: "photos", maxCount: 20 }]),
+  upload.fields([{ name: "jobPdf", maxCount: 1 }, { name: "photos", maxCount: 50 }]),
   async (req, res) => {
     const jobPdfFile = req.files?.jobPdf?.[0];
     const photoFiles = req.files?.photos || [];
