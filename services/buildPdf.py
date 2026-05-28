@@ -309,7 +309,7 @@ def build(json_path, out_path, logo_path):
     vl = ParagraphStyle("val", fontName="Helvetica", fontSize=9, leading=22)
     cw = BODY_W / 2 - 2*mm
 
-    def sig_col(name_val):
+    def sig_col(name_val):    name_val = name_val or ""
         return Table(
             [[Paragraph("Name:", lb)], [Paragraph(name_val, vl)],
              [Paragraph("Signature:", lb)], [Paragraph(" ", vl)],
